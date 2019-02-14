@@ -6,9 +6,9 @@ IMPORTANT: This blueprint requires Java 8 JDK or greater and Maven 3.3.x or grea
 
 === To Run:
 
-'''
+```
 http:<YOUR-HOST-IP>:8081/
-'''
+```
 
 === Client Configurations:
 
