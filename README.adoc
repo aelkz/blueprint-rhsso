@@ -10,8 +10,11 @@ IMPORTANT: This blueprint requires Java 8 JDK or greater and Maven 3.3.x or grea
 http:<YOUR-HOST-IP>:8081/
 ```
 
-=== Client Configurations:
+=== RHSSO Configuration:
 
+client configuration:
+
+```
 client-id: blueprint-endpoint
 client-protocol: openid-connect
 access-type: confidential
@@ -20,9 +23,16 @@ direct-access-grant-enabled: true
 root-url: http://<YOUR-HOST-IP>:8081
 base-url: http://<YOUR-HOST-IP>:8081
 web-origins: *
+```
 
 client roles:
+
+```
 blueprint-admin
+```
 
 user assigned roles:
+
+```
 blueprint-endpoint/blueprint-admin
+```
