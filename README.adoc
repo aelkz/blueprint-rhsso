@@ -20,15 +20,45 @@ client-protocol: openid-connect
 access-type: confidential
 standard-flow-enabled: true
 direct-access-grant-enabled: true
-root-url: http://<YOUR-HOST-IP>:8081
-base-url: http://<YOUR-HOST-IP>:8081
+root-url: https://<YOUR-HOST-IP>:8081
+base-url: https://<YOUR-HOST-IP>:8081
 web-origins: *
 ```
 
-client roles:
+create a new token mapper under blueprint-endpoint client called `github`:
+
+```
+name: github
+consent-required: off
+mapper-type: user attribute
+user-attribute: github
+token-claim-name: github
+claim-json-type: string
+add-to-ID-token: false
+add-to-ACCESS-token: true
+add-to-USER-info: true
+multivalued: false
+```
+
+blueprint-endpoint client roles:
 
 ```
 blueprint-admin
+```
+
+create a new user:
+```
+username: user1
+password: user1
+OBS. set temporary to: off
+```
+
+under attributes tab of the recently created user, add a new attribute called `github` with the value `<YOUR-GITHUB-ADDRESS>`<br>
+Example:<br>
+
+```
+key: aelkz
+value: https://www.github.com/aelkz
 ```
 
 user assigned roles:
