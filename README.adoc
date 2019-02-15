@@ -74,6 +74,7 @@ blueprint-endpoint/blueprint-admin
 === TEST IT!
 
 1. Access the API root context path. Example:
+
 https://<host-ip>:8443/blueprint-rhsso
 or
 http://<host-ip>:8080/blueprint-rhsso
@@ -87,6 +88,9 @@ http://<host-ip>:8080/blueprint-rhsso
 OBS. You may want to call using Postman with the recently acquired access token:
 
 <header> Authorization: Bearer ...
+
 GET https://<host-ip>:8443/blueprint-rhsso/api/greeting
+
 or
+
 GET http://<host-ip>:8080/blueprint-rhsso/api/greeting
