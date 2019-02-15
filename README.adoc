@@ -1,5 +1,7 @@
 = Secured - Spring Boot Blueprint
 
+This application exposes a simple REST API and also provides a index html page for user login.
+
 IMPORTANT: This blueprint requires that you use link:https://access.redhat.com/products/red-hat-single-sign-on[Red Hat SSO] to issue access tokens for interacting with.
 
 IMPORTANT: This blueprint requires Java 8 JDK or greater and Maven 3.3.x or greater.
@@ -72,7 +74,7 @@ blueprint-endpoint/blueprint-admin
 === TEST IT!
 
 1. Access the API root context path. Example:
-https://<host-ip>:8443/
+https://<host-ip>:8443/blueprint-rhsso
 
 2. Login clicking the login button
 
