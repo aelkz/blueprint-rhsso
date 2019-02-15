@@ -9,7 +9,7 @@ IMPORTANT: This blueprint requires Java 8 JDK or greater and Maven 3.3.x or grea
 === To Run:
 
 ```
-http:<YOUR-HOST-IP>:8080/blueprint-rhsso
+http:<YOUR-HOST-IP>:<PORT>/blueprint-rhsso
 ```
 
 === RHSSO Configuration:
@@ -22,8 +22,8 @@ client-protocol: openid-connect
 access-type: confidential
 standard-flow-enabled: true
 direct-access-grant-enabled: true
-root-url: https://<YOUR-HOST-IP>:8081
-base-url: https://<YOUR-HOST-IP>:8081
+root-url: https://<YOUR-HOST-IP>:<PORT>
+base-url: https://<YOUR-HOST-IP>:<PORT>
 web-origins: *
 ```
 
@@ -75,6 +75,8 @@ blueprint-endpoint/blueprint-admin
 
 1. Access the API root context path. Example:
 https://<host-ip>:8443/blueprint-rhsso
+or
+http://<host-ip>:8080/blueprint-rhsso
 
 2. Login clicking the login button
 
@@ -85,4 +87,6 @@ https://<host-ip>:8443/blueprint-rhsso
 OBS. You may want to call using Postman with the recently acquired access token:
 
 <header> Authorization: Bearer ...
+GET https://<host-ip>:8443/blueprint-rhsso/api/greeting
+or
 GET http://<host-ip>:8080/blueprint-rhsso/api/greeting
