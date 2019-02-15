@@ -53,8 +53,10 @@ password: user1
 OBS. set temporary to: off
 ```
 
-under attributes tab of the recently created user, add a new attribute called `github` with the value `<YOUR-GITHUB-ADDRESS>`<br>
-Example:<br>
+under attributes tab of the recently created user, add a new attribute called `github`
+with the value `<YOUR-GITHUB-ADDRESS>`
+
+Example:
 
 ```
 key: aelkz
@@ -66,3 +68,19 @@ user assigned roles:
 ```
 blueprint-endpoint/blueprint-admin
 ```
+
+=== TEST IT!
+
+1. Access the API root context path. Example:
+https://<host-ip>:8443/
+
+2. Login clicking the login button
+
+3. Type user1/user1 for authentication
+
+4. Done!
+
+OBS. You may want to call using Postman with the recently acquired access token:
+
+<header> Authorization: Bearer ...
+GET http://localhost:8081/api/greeting
