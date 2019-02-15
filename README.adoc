@@ -9,7 +9,7 @@ IMPORTANT: This blueprint requires Java 8 JDK or greater and Maven 3.3.x or grea
 === To Run:
 
 ```
-http:<YOUR-HOST-IP>:8081/
+http:<YOUR-HOST-IP>:8080/blueprint-rhsso
 ```
 
 === RHSSO Configuration:
@@ -85,4 +85,4 @@ https://<host-ip>:8443/blueprint-rhsso
 OBS. You may want to call using Postman with the recently acquired access token:
 
 <header> Authorization: Bearer ...
-GET http://localhost:8081/api/greeting
+GET http://<host-ip>:8080/blueprint-rhsso/api/greeting
