@@ -21,6 +21,8 @@ oc project ${PROJECT_NAMESPACE}
 # deploy the app with previously installed image
 oc new-app openjdk-8-rhel8:latest~https://github.com/aelkz/blueprint-rhsso.git --name=${APP_NAME} --context-dir=/ --build-env='MAVEN_MIRROR_URL='${MAVEN_URL} -e MAVEN_MIRROR_URL=${MAVEN_URL} -n ${PROJECT_NAMESPACE}
 
+sleep 5
+
 # configure application port
 oc patch svc ${APP_NAME} -p '{"spec":{"ports":[{"name":"http","port":8080,"protocol":"TCP","targetPort":8080}]}}' -n ${PROJECT_NAMESPACE}
 
@@ -44,20 +46,18 @@ RSA_PUB_KEY=$(curl -k -X GET "$SSO_REALM_KEYS_URL" \
 
 echo "-----BEGIN CERTIFICATE-----" > $SSO_REALM_CERT; echo $RSA_PUB_KEY >> $SSO_REALM_CERT; echo "-----END CERTIFICATE-----" >> $SSO_REALM_CERT
 
-echo ""
-
 cat > ${APP_CONFIGMAP} <<EOL
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: blueprint-sso-config
 data:
-  sso.realm.name: ${SSO_REALM}
-  sso.realm.public.key: ${SSO_REALM_CERT}
-  sso.auth.url: ${SSO_AUTH_URL}
-  sso.client.id: ${SSO_CLIENT_ID}
-  sso.client.secret: ${SSO_CLIENT_SECRET}
-  app.context.path: /${APP_NAME}
+  SSO_REALM_NAME: ${SSO_REALM}
+  SSO_REALM_PUBLIC_KEY: ${SSO_REALM_CERT}
+  SSO_AUTH_URL: ${SSO_AUTH_URL}
+  SSO_CLIENT_ID: ${SSO_CLIENT_ID}
+  SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET}
+  APP_CONTEXT_PATH: /${APP_NAME}
 EOL
 
 oc create -f ${APP_CONFIGMAP} -n ${PROJECT_NAMESPACE}
