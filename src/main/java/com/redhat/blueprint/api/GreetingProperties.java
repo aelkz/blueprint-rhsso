@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.redhat.blueprint.service;
+package com.redhat.blueprint.api;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

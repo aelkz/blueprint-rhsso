@@ -5,31 +5,37 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <title>Secured HTTP API</title>
+
+  <!-- #################################################################################################### -->
+  <!-- WARNING:                                                                                             -->
+  <!-- The javascript adapter can be downloaded through the RHSSO server at:                                -->
+  <!-- http://{RHSSO-URL}/auth/js/keycloak.js                                                               -->
+  <!-- #################################################################################################### -->
+
   <script type="application/javascript" src="js/keycloak.js"></script>
+  <!-- É possível substituir por uma versão minificada para melhorar o desempenho -->
+
 </head>
-<body onload="initSSO()">
+<body>
 <div class="container">
 
   <div>
     <h1>Secure HTTP API - Spring Boot</h1>
-    <p class="lead">The mission expands on the REST API Level 0 Booster by securing a REST endpoint using <a
-            href="https://access.redhat.com/products/red-hat-single-sign-on">Red Hat SSO</a>. Red Hat SSO implements the
+    <p class="lead">Red Hat SSO implements the
       OAuth 2.0 specification and uses it to issue access tokens to provide clients with various access rights to secured
       resources. Securing an application with SSO enables you to add security to your applications while centralizing the
       security configuration.
     </p>
 
-    <h2>Using the greeting service</h2>
-    <p class="lead">The greeting service is a protected endpoint. You will need to login first.
-    </p>
+    <h3>1. The greeting service is a <b>protected</b> endpoint. You will need to login first.</h3>
 
     <div class=form-group>
-      <button id="login" onclick="keycloak.login()" class="btn">Login</button>
-      <button id="logout" onclick="keycloak.logout()" class="btn">Logout</button>
+      <button id="login" onclick="keycloak.login()" class="btn btn-primary">Login</button>
+      <button id="logout" onclick="keycloak.logout()" class="btn btn-warning">Logout</button>
     </div>
 
     <form class="form-inline">
-      <h3>Greeting service (as <span id="user"><i>Unauthenticated</i></span>):</h3>
+      <h3>2. Call <i>greeting service</i> REST API (as <span id="user"><font color="#a52a2a"><i>anonymous user</i></font></span>):</h3>
       <div class=form-group>
         <!-- <form onsubmit="return invokeAPI()"> -->
         <label for="name">Name</label>
@@ -39,10 +45,10 @@
       <button id="invoke" class="btn btn-success">Invoke</button>
     </form>
 
-    <h3>Result:</h3>
+    <h3>REST API response:</h3>
     <pre><code id="result">Invoke the service to see the result.</code></pre>
 
-    <h3>Curl command for the command line:</h3>
+    <h3>3- Also, you can execute curl command using the terminal:</h3>
     <div class=form-group>
       <textarea id="curl" class="form-control" style="font-style: italic;" readonly></textarea>
     </div>
@@ -55,53 +61,70 @@
         crossorigin="anonymous"></script>
 
 <script>
-    // configure the SSO object
-    var keycloak = Keycloak('/api/keycloak');
+  // configure the SSO object
+  var keycloak = null;
 
-    function initSSO() {
-        keycloak.init().success(function () {
-            // validate that init operation result
-            if (keycloak.authenticated) {
-                // update UI to show the current user
-                $('#user').text(keycloak.tokenParsed.preferred_username);
-                $('#curl').text('curl -H "Authorization: Bearer ' + keycloak.token + '" http://' + window.location.host + '/api/greeting');
-            } else {
-                // update UI to show the current user
-                $('#user').html('<i>Unauthenticated</i>');
-                $('#curl').text('');
-            }
-        }).error(function (err) {
-            alert(err);
-        });
-    }
+  function initSSO(data) {
+    console.log(JSON.stringify(data));
 
-    $(document).ready(function () {
-        $("#invoke").click(function (e) {
-            e.preventDefault();
-            //invokeAPI();
-            const name = $("#name").val() || "World";
-            let nameParam = '';
-            if (!(name === null || name === undefined || name === '')) {
-                nameParam = '?name=' + encodeURIComponent(name);
-            }
-            // create a AJAX call
-            const url = '//' + window.location.host + '/api/greeting' + nameParam;
-            $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Accept', 'application/json');
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + keycloak.token);
-                }
-            }).success(function (res) {
-                $('#result').html(JSON.stringify(res));
-            }).error(function (req) {
-                alert('Invocation failed!\n  cause: [' + req.status + '] ' + req.responseJSON.error);
-            });
-            return false;
-        });
+    keycloak = Keycloak(data);
+
+    keycloak.init().success(function () {
+      // validate that init operation result
+      if (keycloak.authenticated) {
+        // update UI to show the current user
+        $('#user').html('logged user:&nbsp;<font color="#6495ed">'+keycloak.tokenParsed.preferred_username+'</font>');
+        $('#curl').text('curl -H "Authorization: Bearer ' + keycloak.token + '" http://' + window.location.host + '/api/greeting');
+      } else {
+        // update UI to show the current user
+        $('#user').html('<font color="#a52a2a"><i>anonymous user</i></font>');
+        $('#curl').text('');
+      }
+    }).error(function (err) {
+      alert(err);
     });
+  }
+
+  $(document).ready(function () {
+    $.ajax({
+      headers: {
+        "Accept":"application/json",
+        "Content-Type":"application/json",
+      },
+      url: "http://" + window.location.host + "/api/keycloak",
+      type: "GET",
+      success: function(data) {
+        initSSO(data);
+      }
+    });
+
+    $("#invoke").click(function (e) {
+      e.preventDefault();
+      //invokeAPI();
+      const name = $("#name").val() || "World";
+      let nameParam = '';
+      if (!(name === null || name === undefined || name === '')) {
+        nameParam = '?name=' + encodeURIComponent(name);
+      }
+      // create a AJAX call
+      const url = '//' + window.location.host + '/api/greeting' + nameParam;
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader('Accept', 'application/json');
+          xhr.setRequestHeader('Authorization', 'Bearer ' + keycloak.token);
+        }
+      }).success(function (res) {
+        $('#result').html(JSON.stringify(res));
+      }).error(function (req) {
+        alert('Invocation failed!\n  cause: [' + req.status + '] ' + req.responseJSON.error);
+      });
+      return false;
+    });
+
+  });
 </script>
 </body>
 </html>

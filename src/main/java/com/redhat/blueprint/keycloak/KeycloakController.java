@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.blueprint.service;
+package com.redhat.blueprint.keycloak;
 
+import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class KeycloakController {
 
     @Autowired
-    private KeycloakProperties properties;
+    private KeycloakSpringBootProperties properties;
 
     @RequestMapping(value = "/api/keycloak", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = MediaType.ALL_VALUE)
     public Keycloak keycloak() {
-        Keycloak config = new Keycloak(properties.getRealm(), properties.getAuthUrl(), true, properties.getResource(), true, "external", true);
-        return config;
+        return new Keycloak(properties.getRealm(), properties.getAuthServerUrl(), true, properties.getResource(), true, "external", true);
     }
 }

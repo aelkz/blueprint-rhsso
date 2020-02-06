@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# ########################################################################################################################
+# WARNING !!!
+# There are some prerequisites in order to fully run this script.
+# Please, proceed with the steps below first:
+#
+# ########################################################################################################################
+
 PROJECT_NAMESPACE=microservices-dev
 APP_NAME=blueprint-sso
 APP_CONTEXT_PATH=/
