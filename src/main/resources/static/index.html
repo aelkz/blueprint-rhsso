@@ -64,19 +64,17 @@
   // configure the SSO object
   var keycloak = Keycloak('/api/keycloak');
 
-  function initSSO(data) {
-    console.log(JSON.stringify(data));
-
-    keycloak = Keycloak(data);
-
+  function initSSO() {
     keycloak.init().success(function () {
       // validate that init operation result
       if (keycloak.authenticated) {
         // update UI to show the current user
+        $('#logout').show();
         $('#user').html('logged user:&nbsp;<font color="#6495ed">'+keycloak.tokenParsed.preferred_username+'</font>');
         $('#curl').text('curl -H "Authorization: Bearer ' + keycloak.token + '" http://' + window.location.host + '/api/greeting');
       } else {
         // update UI to show the current user
+        $('#logout').hide();
         $('#user').html('<font color="#a52a2a"><i>anonymous user</i></font>');
         $('#curl').text('');
       }
