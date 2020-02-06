@@ -16,7 +16,7 @@
   <!-- É possível substituir por uma versão minificada para melhorar o desempenho -->
 
 </head>
-<body>
+<body onload="initSSO()">
 <div class="container">
 
   <div>
@@ -62,7 +62,7 @@
 
 <script>
   // configure the SSO object
-  var keycloak = null;
+  var keycloak = Keycloak('/api/keycloak');
 
   function initSSO(data) {
     console.log(JSON.stringify(data));
@@ -86,18 +86,6 @@
   }
 
   $(document).ready(function () {
-    $.ajax({
-      headers: {
-        "Accept":"application/json",
-        "Content-Type":"application/json",
-      },
-      url: "http://" + window.location.host + "/api/keycloak",
-      type: "GET",
-      success: function(data) {
-        initSSO(data);
-      }
-    });
-
     $("#invoke").click(function (e) {
       e.preventDefault();
       //invokeAPI();
@@ -114,7 +102,9 @@
         dataType: 'json',
         beforeSend: function (xhr) {
           xhr.setRequestHeader('Accept', 'application/json');
-          xhr.setRequestHeader('Authorization', 'Bearer ' + keycloak.token);
+          if (keycloak.token != null && keycloak.token != '') {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + keycloak.token);
+          }
         }
       }).success(function (res) {
         $('#result').html(JSON.stringify(res));
