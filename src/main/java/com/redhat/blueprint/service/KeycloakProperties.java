@@ -28,10 +28,10 @@ public class KeycloakProperties {
     @Value("${keycloak.realm-key}")
     private String key;
 
-    @Value("{keycloak.auth-server-url}")
+    @Value("${keycloak.auth-server-url}")
     private String authUrl;
 
-    @Value("{keycloak.resource}")
+    @Value("${keycloak.resource}")
     private String resource;
 
     public String getRealm() {

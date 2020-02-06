@@ -10,8 +10,8 @@ SSO_REALM=REDHAT
 SSO_REALM_CERT=$SSO_REALM.pem
 SSO_REALM_USERNAME=redhat
 SSO_REALM_PASSWORD=12345
-SSO_API_CLIENT_ID=blueprint-sso-api
-SSO_WEB_CLIENT_ID=blueprint-sso-api
+SSO_API_CLIENT_ID=blueprint-sso-app
+SSO_WEB_CLIENT_ID=blueprint-sso-web
 SSO_CLIENT_SECRET=ba87675e-6c29-4edf-bdd3-9b9fd73dad1c
 SSO_AUTH_URL=https://${SSO_URL}/auth
 SSO_TOKEN_URL=https://${SSO_URL}/auth/realms/${SSO_REALM}/protocol/openid-connect/token
@@ -53,7 +53,7 @@ cat > ${APP_CONFIGMAP} <<EOL
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: blueprint-sso-config-api
+  name: blueprint-sso-config-app
 data:
   SSO_REALM_NAME: ${SSO_REALM}
   SSO_REALM_PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----\n${RSA_PUB_KEY}\n-----END PUBLIC KEY-----"
@@ -62,7 +62,7 @@ data:
   APP_CONTEXT_PATH: "${APP_CONTEXT_PATH}"
 EOL
 
-oc delete configmap blueprint-sso-config-api
+oc delete configmap blueprint-sso-config-app
 sleep 5
 oc create -f ${APP_CONFIGMAP} -n ${PROJECT_NAMESPACE}
-oc set env dc/${APP_NAME} --from=configmap/blueprint-sso-config-api
+oc set env dc/${APP_NAME} --from=configmap/blueprint-sso-config-app
