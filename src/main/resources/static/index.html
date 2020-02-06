@@ -56,7 +56,7 @@
 
 <script>
     // configure the SSO object
-    var keycloak = Keycloak('/keycloak.json');
+    var keycloak = Keycloak('/api/keycloak');
 
     function initSSO() {
         keycloak.init().success(function () {

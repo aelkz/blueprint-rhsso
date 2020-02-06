@@ -2,15 +2,16 @@
 
 PROJECT_NAMESPACE=microservices-dev
 APP_NAME=blueprint-sso
+APP_CONTEXT_PATH=/
 APP_CONFIGMAP=blueprint-rhsso-env.yml
 OCP_APP_DOMAIN=apps.sememeve.com
-OCP_SSO_HOST=
 SSO_URL=sso73.apps.sememeve.com
 SSO_REALM=REDHAT
 SSO_REALM_CERT=$SSO_REALM.pem
 SSO_REALM_USERNAME=redhat
 SSO_REALM_PASSWORD=12345
-SSO_CLIENT_ID=blueprint-sso
+SSO_API_CLIENT_ID=blueprint-sso-api
+SSO_WEB_CLIENT_ID=blueprint-sso-api
 SSO_CLIENT_SECRET=ba87675e-6c29-4edf-bdd3-9b9fd73dad1c
 SSO_AUTH_URL=https://${SSO_URL}/auth
 SSO_TOKEN_URL=https://${SSO_URL}/auth/realms/${SSO_REALM}/protocol/openid-connect/token
@@ -31,8 +32,10 @@ oc label svc ${APP_NAME} monitor=springboot2-api -n ${PROJECT_NAMESPACE}
 # expose the application to public access
 oc create route edge --service=${APP_NAME} --hostname=${APP_NAME}.${OCP_APP_DOMAIN} --insecure-policy='None' --port='8080' -n ${PROJECT_NAMESPACE}
 
-# create a configmap for the application.properties
-TKN=$(curl -k -X POST "$SSO_TOKEN_URL" \
+sleep 5
+
+# create a configmap for the application.properties (back-end)
+TKN=$(curl -v -k -X POST $SSO_TOKEN_URL \
  -H "Content-Type: application/x-www-form-urlencoded" \
  -d "username=$SSO_REALM_USERNAME" \
  -d "password=$SSO_REALM_PASSWORD" \
@@ -40,7 +43,7 @@ TKN=$(curl -k -X POST "$SSO_TOKEN_URL" \
  -d "client_id=admin-cli" \
  | sed 's/.*access_token":"//g' | sed 's/".*//g')
 
-RSA_PUB_KEY=$(curl -k -X GET "$SSO_REALM_KEYS_URL" \
+RSA_PUB_KEY=$(curl -v -k -X GET $SSO_REALM_KEYS_URL \
  -H "Authorization: Bearer $TKN" \
  | jq -r '.keys[]  | select(.type=="RSA") | .publicKey' )
 
@@ -50,15 +53,17 @@ cat > ${APP_CONFIGMAP} <<EOL
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: blueprint-sso-config
+  name: blueprint-sso-config-api
 data:
   SSO_REALM_NAME: ${SSO_REALM}
-  SSO_REALM_PUBLIC_KEY: ${SSO_REALM_CERT}
-  SSO_AUTH_URL: ${SSO_AUTH_URL}
-  SSO_CLIENT_ID: ${SSO_CLIENT_ID}
+  SSO_REALM_PUBLIC_KEY: "-----BEGIN PUBLIC KEY-----\n${RSA_PUB_KEY}\n-----END PUBLIC KEY-----"
+  SSO_AUTH_URL: "${SSO_AUTH_URL}"
+  SSO_API_CLIENT_ID: ${SSO_API_CLIENT_ID}
   SSO_CLIENT_SECRET: ${SSO_CLIENT_SECRET}
-  APP_CONTEXT_PATH: /${APP_NAME}
+  APP_CONTEXT_PATH: "${APP_CONTEXT_PATH}"
 EOL
 
+oc delete configmap blueprint-sso-config-api
+sleep 5
 oc create -f ${APP_CONFIGMAP} -n ${PROJECT_NAMESPACE}
-oc set env dc/${APP} --from=configmap/blueprint-sso-config
+oc set env dc/${APP_NAME} --from=configmap/blueprint-sso-config-api

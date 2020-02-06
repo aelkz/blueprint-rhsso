@@ -1,7 +1,0 @@
-{
-  "realm": "MYREALM",
-  "auth-server-url" : "http://localhost:8080/auth",
-  "no-check-certificate": true,
-  "resource" : "blueprint-endpoint",
-  "enable-cors": true
-}
