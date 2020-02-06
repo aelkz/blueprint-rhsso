@@ -12,6 +12,10 @@ IMPORTANT: This blueprint requires Java 8 JDK or greater and Maven 3.3.x or grea
 http:<YOUR-HOST-IP>:<PORT>/blueprint-rhsso
 ```
 
+=== Path to Javascrip Adapter
+
+https://<RHSSO-HOSTNAME>/auth/js/keycloak.js
+
 === RHSSO Configuration:
 
 client configuration:
