@@ -34,9 +34,6 @@ public class KeycloakProperties {
     @Value("{keycloak.resource}")
     private String resource;
 
-    @Value("{keycloak.credentials.secret}")
-    private String secret;
-
     public String getRealm() {
         return realm;
     }
@@ -67,13 +64,5 @@ public class KeycloakProperties {
 
     public void setResource(String resource) {
         this.resource = resource;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
     }
 }
